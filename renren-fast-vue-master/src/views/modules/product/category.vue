@@ -6,7 +6,9 @@
       :props="defaultProps"
       :expand-on-click-node="false"
       node-key="catId"
+      :draggable="true"
       :default-expanded-keys="expandKeys"
+      :allow-drop="allowDrop"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
@@ -84,6 +86,7 @@ export default {
       },
       formLabelWidth: "120px",
       dialogType: true, //默认是添加操作
+      maxLevel: 0,
     };
   },
   methods: {
@@ -220,6 +223,34 @@ export default {
             message: "已取消删除",
           });
         });
+    },
+    // draggingNode 要拖拽的节点
+    // dropNode 目标节点
+    // type 参数有三种情况：'prev'、'inner' 和 'next'
+    allowDrop(draggingNode, dropNode, type) {
+      // 1.获取当前被拖拽的节点的最大的level
+      this.countNodeLevel(draggingNode);
+      console.log(this.maxLevel);
+      let deep = Math.abs(this.maxLevel - draggingNode.level) + 1;
+      if (type == "inner") {
+        return dropNode.level + deep <= 3;
+      } else {
+        return dropNode.parent.level + deep <= 3;
+      }
+    },
+    countNodeLevel(node) {
+      console.log(node);
+      // 在获取子节点前给maxLevel赋值
+      this.maxLevel = node.data.catLevel;
+      // 找到所有子节点，最大的level
+      if (node.childNodes != null && node.childNodes.length > 0) {
+        for (let i = 0; i < node.childNodes.length; i++) {
+          if (node.childNodes[i].level > this.maxLevel) {
+            this.maxLevel = node.childNodes[i].level;
+          }
+          this.countNodeLevel(node.childNodes[i]);
+        }
+      }
     },
   },
   created() {
