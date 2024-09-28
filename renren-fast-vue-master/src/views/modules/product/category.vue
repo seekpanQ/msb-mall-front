@@ -19,6 +19,9 @@
           >
             添加
           </el-button>
+          <el-button type="text" size="mini" @click="() => edit(data)">
+            更新
+          </el-button>
           <el-button
             v-if="data.children.length == 0"
             type="text"
@@ -53,7 +56,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addDialog">确 定</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -80,6 +83,7 @@ export default {
         productUnit: "",
       },
       formLabelWidth: "120px",
+      dialogType: true, //默认是添加操作
     };
   },
   methods: {
@@ -93,16 +97,76 @@ export default {
       });
     },
     append(data) {
+      this.dialogType = true;
       this.dialogVisible = true; // 打开弹出窗口
       console.log("添加", data);
       this.categoryForm.parentCid = data.catId; // 添加的类别对应的父菜单
       this.categoryForm.catLevel = data.catLevel + 1; // 设置添加类别的层级
       this.categoryForm.showStatus = 1; // 菜单的显示状态  1 显示  0 被删除
       this.categoryForm.sort = 0; // 排序 默认给 0
+      // 新增表单内容默认置空
+      this.categoryForm.name = "";
+      this.categoryForm.icon = "";
+      this.categoryForm.productUnit = "";
+    },
+    edit(data) {
+      this.dialogType = false;
+      //获取最新的表单数据回写
+      this.$http({
+        url: this.$http.adornUrl(`/product/category/info/${data.catId}`),
+        method: "get",
+      }).then(({ data }) => {
+        console.log("成功获取表单回写数据：", data.category);
+        //表单数据回写
+        this.categoryForm.name = data.category.name;
+        this.categoryForm.icon = data.category.icon;
+        this.categoryForm.productUnit = data.category.productUnit;
+        this.categoryForm.parentCid = data.category.parentCid;
+        this.categoryForm.catLevel = data.category.catLevel;
+
+        //填充更新数据的id
+        this.categoryForm.catId = data.category.catId;
+        this.categoryForm.showStatus = 1;
+        this.categoryForm.sort = 0;
+
+        this.dialogVisible = true; // 打开弹出窗口
+      });
+    },
+    submitForm() {
+      console.log("dialogType", this.dialogType);
+      //判断当前操作是更新还是天剑
+      if (this.dialogType) {
+        //添加操作
+        this.addDialog();
+      } else {
+        //更新操作
+        this.editDialog();
+      }
     },
     addDialog() {
       this.$http({
         url: this.$http.adornUrl("/product/category/save"),
+        method: "post",
+        data: this.$http.adornData(this.categoryForm, false),
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+          });
+          this.dialogVisible = false; // 关闭弹出窗口
+          // 重新加载所有的菜单数据
+          this.getCategory();
+          // 设置默认展开的父节点信息
+          this.expandKeys = [this.categoryForm.parentCid];
+        } else {
+          this.$message.error(data.msg);
+        }
+      });
+    },
+    editDialog() {
+      this.$http({
+        url: this.$http.adornUrl("/product/category/update"),
         method: "post",
         data: this.$http.adornData(this.categoryForm, false),
       }).then(({ data }) => {
