@@ -30,6 +30,32 @@
         </span>
       </span>
     </el-tree>
+    <!--添加弹出框-->
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+      :close-on-click-modal="false"
+    >
+      <el-form :model="categoryForm">
+        <el-form-item label="类别名称" :label-width="formLabelWidth">
+          <el-input v-model="categoryForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="图标" :label-width="formLabelWidth">
+          <el-input v-model="categoryForm.icon" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="计量单位" :label-width="formLabelWidth">
+          <el-input
+            v-model="categoryForm.productUnit"
+            autocomplete="off"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addDialog">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -39,10 +65,21 @@ export default {
     return {
       data: [],
       expandKeys: [],
+      dialogVisible: false,
       defaultProps: {
         children: "children",
         label: "name",
       },
+      categoryForm: {
+        parentCid: 0,
+        catLevel: 0,
+        showStatus: 0,
+        sort: 0,
+        name: "",
+        icon: "",
+        productUnit: "",
+      },
+      formLabelWidth: "120px",
     };
   },
   methods: {
@@ -56,7 +93,33 @@ export default {
       });
     },
     append(data) {
+      this.dialogVisible = true; // 打开弹出窗口
       console.log("添加", data);
+      this.categoryForm.parentCid = data.catId; // 添加的类别对应的父菜单
+      this.categoryForm.catLevel = data.catLevel + 1; // 设置添加类别的层级
+      this.categoryForm.showStatus = 1; // 菜单的显示状态  1 显示  0 被删除
+      this.categoryForm.sort = 0; // 排序 默认给 0
+    },
+    addDialog() {
+      this.$http({
+        url: this.$http.adornUrl("/product/category/save"),
+        method: "post",
+        data: this.$http.adornData(this.categoryForm, false),
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+          });
+          this.dialogVisible = false; // 关闭弹出窗口
+          // 重新加载所有的菜单数据
+          this.getCategory();
+          // 设置默认展开的父节点信息
+          this.expandKeys = [this.categoryForm.parentCid];
+        } else {
+          this.$message.error(data.msg);
+        }
+      });
     },
     remove(node, data) {
       this.$confirm(`是否确认删除【${data.name}】记录?`, "提示", {
