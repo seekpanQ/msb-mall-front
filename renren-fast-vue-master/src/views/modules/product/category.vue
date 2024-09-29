@@ -1,12 +1,21 @@
 <template>
   <div>
+    <el-switch
+      v-model="draggable"
+      active-text="开启拖拽"
+      inactive-text="关闭拖拽"
+    >
+    </el-switch>
+    <el-button type="primary" v-if="draggable" @click="editSort"
+      >批量保存</el-button
+    >
     <el-tree
       :data="data"
       show-checkbox
       :props="defaultProps"
       :expand-on-click-node="false"
       node-key="catId"
-      :draggable="true"
+      :draggable="draggable"
       :default-expanded-keys="expandKeys"
       :allow-drop="allowDrop"
       @node-drop="handleDrop"
@@ -88,8 +97,9 @@ export default {
       formLabelWidth: "120px",
       dialogType: true, //默认是添加操作
       maxLevel: 0,
-      updateNodes: [],
+      updateNodes: [], // 拖拽节点后，需要更新的节点的节点信息
       pCid: [],
+      draggable: false, // 拖拽功能默认是关闭的
     };
   },
   methods: {
@@ -291,9 +301,9 @@ export default {
       }
       this.pCid.push(parentId);
       // 将需要更新的数据提交到后端服务处理
-      this.editSort(parentId);
-      this.updateNodes = [];
-      this.maxLevel = 0;
+      // this.editSort(parentId);
+      // this.updateNodes = [];
+      // this.maxLevel = 0;
     },
     updateChildNodeLevel(node) {
       console.log(node);
