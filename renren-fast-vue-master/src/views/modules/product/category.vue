@@ -9,6 +9,7 @@
     <el-button type="primary" v-if="draggable" @click="editSort"
       >批量保存</el-button
     >
+    <el-button type="danger" @click="batchDelete">批量删除</el-button>
     <el-tree
       :data="data"
       show-checkbox
@@ -19,6 +20,7 @@
       :default-expanded-keys="expandKeys"
       :allow-drop="allowDrop"
       @node-drop="handleDrop"
+      ref="tree"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
@@ -344,6 +346,44 @@ export default {
           this.countNodeLevel(node.childNodes[i]);
         }
       }
+    },
+    batchDelete() {
+      let catIds = [];
+      // 批量的删除类别
+      let checkedNodes = this.$refs.tree.getCheckedNodes(false, false);
+      for (let i = 0; i < checkedNodes.length; i++) {
+        catIds.push(checkedNodes[i].catId);
+      }
+      this.$confirm(`是否确认删除【${catIds}】记录?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then((_) => {
+          // 把删除的请求提交到后台服务
+          this.$http({
+            url: this.$http.adornUrl("/product/category/delete"),
+            method: "post",
+            data: this.$http.adornData(catIds, false),
+          }).then(({ data }) => {
+            if (data && data.code === 0) {
+              this.$message({
+                message: "操作成功",
+                type: "success",
+              });
+              // 重新加载所有的菜单数据
+              this.getCategory();
+            } else {
+              this.$message.error(data.msg);
+            }
+          });
+        })
+        .catch((_) => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
   created() {
