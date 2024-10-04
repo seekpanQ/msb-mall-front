@@ -69,7 +69,7 @@ export default {
         ossaccessKeyId: "",
         dir: "",
         host: "",
-        callback:'',
+        // callback:'',
       },
       dialogVisible: false,
     };

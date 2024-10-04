@@ -38,7 +38,11 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="排序" prop="sort">
-        <el-input v-model="dataForm.sort" placeholder="排序"></el-input>
+        <el-input
+          type="number"
+          v-model="dataForm.sort"
+          placeholder="排序"
+        ></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -49,7 +53,7 @@
 </template>
 
 <script>
-import SingleUpload from '../../../components/upload/singleUpload.vue';
+import SingleUpload from "../../../components/upload/singleUpload.vue";
 export default {
   components: { SingleUpload },
   data() {
@@ -60,9 +64,9 @@ export default {
         name: "",
         logo: "",
         descript: "",
-        showStatus: "",
+        showStatus: 1,
         firstLetter: "",
-        sort: "",
+        sort: 0,
       },
       dataRule: {
         name: [{ required: true, message: "品牌名不能为空", trigger: "blur" }],
@@ -80,9 +84,33 @@ export default {
           },
         ],
         firstLetter: [
-          { required: true, message: "检索首字母不能为空", trigger: "blur" },
+          {
+            validator: (rule, value, callback) => {
+              if (value == "") {
+                callback(new Error("检索首字母不能为空"));
+              } else if (!/^[a-zA-Z]$/.test(value)) {
+                callback(new Error("检索首字母必须是在a-z或者A-Z之间"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
+          },
         ],
-        sort: [{ required: true, message: "排序不能为空", trigger: "blur" }],
+        sort: [
+          {
+            validator: (rule, value, callback) => {
+              if (value == "" && value != 0) {
+                callback(new Error("排序不能为空"));
+              } else if (Number.parseInt(value) <= 0) {
+                callback(new Error("排序必须是数字且必须大于0"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
