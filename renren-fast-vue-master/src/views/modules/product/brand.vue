@@ -63,6 +63,16 @@
         align="center"
         label="品牌logo地址"
       >
+        <template slot-scope="scope">
+          <!-- <i class="el-icon-time"></i>
+        <span style="margin-left: 10px">{{ scope.row.date }}</span> -->
+          <img
+            v-if="scope.row.logo"
+            :src="scope.row.logo"
+            width="100px"
+            height="80px"
+          />
+        </template>
       </el-table-column>
       <el-table-column
         prop="descript"
