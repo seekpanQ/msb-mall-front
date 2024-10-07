@@ -128,13 +128,13 @@
             ref="addOrUpdate"
             @refreshDataList="getDataList"
           ></add-or-update>
-        </div> </template></el-col
+        </div> </template>
+        </el-col
   ></el-row>
-</template>
-  </el-row>
 </template>
 <script>
 import Category from "../common/category.vue";
+import AddOrUpdate from "./attrgroup-add-or-update.vue";
 export default {
   data() {
     return {
@@ -151,7 +151,7 @@ export default {
       catId: "",
     };
   },
-  components: { Category },
+  components: { Category,AddOrUpdate },
   methods: {
     treenodeclick(data) {
       //   console.log("点击的tree的nodeId", catId);
