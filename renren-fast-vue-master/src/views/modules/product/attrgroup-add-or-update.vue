@@ -3,6 +3,7 @@
     :title="!dataForm.attrGroupId ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
+    @close="dialogClose"
   >
     <el-form
       :model="dataForm"
@@ -60,7 +61,7 @@ export default {
         sort: "",
         descript: "",
         icon: "",
-        catelogId: "",
+        catelogId: "0",
       },
       dataRule: {
         attrGroupName: [
@@ -78,6 +79,9 @@ export default {
     };
   },
   methods: {
+    dialogClose() {
+      this.catelogPath = [];
+    },
     getCategory() {
       this.$http({
         url: this.$http.adornUrl("/product/category/listTree"),
@@ -104,7 +108,7 @@ export default {
               this.dataForm.sort = data.attrGroup.sort;
               this.dataForm.descript = data.attrGroup.descript;
               this.dataForm.icon = data.attrGroup.icon;
-              this.dataForm.catelogId = data.attrGroup.catelogId;
+              this.catelogPath = data.attrGroup.catelogPath;
             }
           });
         }
@@ -127,7 +131,7 @@ export default {
               sort: this.dataForm.sort,
               descript: this.dataForm.descript,
               icon: this.dataForm.icon,
-              catelogId: this.dataForm.catelogId,
+              catelogId: this.catelogPath[this.catelogPath.length - 1],
             }),
           }).then(({ data }) => {
             if (data && data.code === 0) {

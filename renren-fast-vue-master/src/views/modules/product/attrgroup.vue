@@ -148,7 +148,7 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
-      catId: "",
+      catId: "1",
     };
   },
   components: { Category,AddOrUpdate },
