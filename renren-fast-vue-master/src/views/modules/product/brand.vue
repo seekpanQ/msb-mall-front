@@ -240,6 +240,15 @@ export default {
     this.getDataList();
   },
   methods: {
+    deleteCateRelationHandle(id, brandId) {
+      this.$http({
+        url: this.$http.adornUrl("/product/categorybrandrelation/delete"),
+        method: "post",
+        data: this.$http.adornData([id], false),
+      }).then(({ data }) => {
+        this.getCateRelation();
+      });
+    },
     updateCatelogHandle(brandId) {
       this.cateRelationDialogVisible = true;
       this.brandId = brandId;

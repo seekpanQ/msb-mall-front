@@ -37,7 +37,7 @@
             更新
           </el-button>
           <el-button
-            v-if="data.children.length == 0"
+            v-if="data.children && data.children.length == 0"
             type="text"
             size="mini"
             @click="() => remove(node, data)"
