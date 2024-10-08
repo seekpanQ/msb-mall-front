@@ -100,6 +100,12 @@
                 <el-button
                   type="text"
                   size="small"
+                  @click="relationHandle(scope.row.attrGroupId)"
+                  >关联</el-button
+                >
+                <el-button
+                  type="text"
+                  size="small"
                   @click="addOrUpdateHandle(scope.row.attrGroupId)"
                   >修改</el-button
                 >
@@ -128,13 +134,20 @@
             ref="addOrUpdate"
             @refreshDataList="getDataList"
           ></add-or-update>
-        </div> </template>
-        </el-col
+          <!-- 修改关联关系 -->
+          <relation-update
+            v-if="relationVisible"
+            ref="relationUpdate"
+            @refreshData="getDataList"
+          ></relation-update>
+        </div>
+      </template> </el-col
   ></el-row>
 </template>
 <script>
 import Category from "../common/category.vue";
 import AddOrUpdate from "./attrgroup-add-or-update.vue";
+import RelationUpdate from "./attr-group-relation.vue";
 export default {
   data() {
     return {
@@ -148,10 +161,11 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
+      relationVisible: false,
       catId: "1",
     };
   },
-  components: { Category,AddOrUpdate },
+  components: { Category, AddOrUpdate, RelationUpdate },
   methods: {
     treenodeclick(data) {
       //   console.log("点击的tree的nodeId", catId);
@@ -196,6 +210,13 @@ export default {
     // 多选
     selectionChangeHandle(val) {
       this.dataListSelections = val;
+    },
+    // 关联
+    relationHandle(groupId) {
+      this.relationVisible = true;
+      this.$nextTick(() => {
+        this.$refs.relationUpdate.init(groupId);
+      });
     },
     // 新增 / 修改
     addOrUpdateHandle(id) {
