@@ -24,7 +24,7 @@ export default {
   methods: {
     nodeclick(data, node, component) {
       console.log("分类节点被点击了", data, node, component);
-      this.$emit("show", data);
+      this.$emit("show", data, node, component);
     },
     getCategory() {
       this.$http({
