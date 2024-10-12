@@ -783,7 +783,7 @@ export default {
   created() {},
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-    this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {
+    this.catPathSub = PubSub.subscribe("catelogPath", (msg, val) => {
       this.spu.catalogId = val[val.length - 1];
     });
     this.brandIdSub = PubSub.subscribe("brandId", (msg, val) => {

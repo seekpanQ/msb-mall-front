@@ -227,9 +227,9 @@ export default {
               this.dataForm.attrName = data.attr.attrName;
               this.dataForm.searchType = data.attr.searchType;
               this.dataForm.valueType =
-                data.attr.valueSelect.split(",").length < 2 ? 0 : 1;
+                data.attr.valueSelect.split(";").length < 2 ? 0 : 1;
               this.dataForm.icon = data.attr.icon;
-              this.dataForm.valueSelect = data.attr.valueSelect.split(",");
+              this.dataForm.valueSelect = data.attr.valueSelect.split(";");
               this.dataForm.attrType = data.attr.attrType;
               this.dataForm.enable = data.attr.enable;
               this.dataForm.catelogId = data.attr.catelogId;
@@ -260,7 +260,7 @@ export default {
               searchType: this.dataForm.searchType,
               valueType: this.dataForm.valueType,
               icon: this.dataForm.icon,
-              valueSelect: this.dataForm.valueSelect.join(","),
+              valueSelect: this.dataForm.valueSelect.join(";"),
               attrType: this.dataForm.attrType,
               enable: this.dataForm.enable,
               catelogId: this.dataForm.catelogId,
