@@ -182,7 +182,7 @@ export default {
     }
   },
   mounted() {
-    this.catPathSub = PubSub.subscribe("catPath", (msg, val) => {
+    this.catPathSub = PubSub.subscribe("catelogPath", (msg, val) => {
       this.dataForm.catelogId = val[val.length - 1];
     });
     this.brandIdSub = PubSub.subscribe("brandId", (msg, val) => {
